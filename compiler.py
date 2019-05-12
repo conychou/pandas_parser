@@ -3,7 +3,7 @@ import pandas as pd
 from sly import Lexer,Parser
 
 class MyLexer(Lexer):
-    tokens = { INPUT,OUTPUT,SELECT,PROJECT,AVGGROUP,AVG,SUMGROUP,SORT,MOVAVG,MOVSUM,CONCAT,BTREE,HASH,COMP,OR,AND,NAME,NUMBER,DEFINE }
+    tokens = { INPUT,OUTPUT,SELECT,PROJECT,AVGGROUP,AVG,SUMGROUP,SORT,JOIN,MOVAVG,MOVSUM,CONCAT,BTREE,HASH,COMP,OR,AND,NAME,NUMBER,DEFINE }
     literals = {'(',')', ','} 
     ignore = ' \t'
    
@@ -16,12 +16,13 @@ class MyLexer(Lexer):
     AVG = r'avg'
     SUMGROUP = r'sumgroup'
     SORT = r'sort'
+    JOIN = r'join'
     MOVAVG = r'movavg'
     MOVSUM = r'movsum'
     CONCAT = r'concat'
     BTREE = r'Btree'
     HASH = r'Hash'
-    COMP = r'[><=]'
+:x
     OR = r'or'
     AND = r'and'
     NAME = r'[\']?[a-zA-Z_][a-zA-Z0-9_]*[\']?'
@@ -77,6 +78,12 @@ class MyParser(Parser):
     @_('SELECT "(" NAME "," expr ")"')
     def expr(self, p):
         return self.names[p.NAME].query(p.expr)
+
+    @_('JOIN "(" NAME "," NAME "," expr ")"')
+    def expr(self, p):
+        df0 = self.names[p.NAME0].add_prefix(p.NAME0+"_")
+        df1 = self.names[p.NAME1].add_prefix(p.NAME1+"_")
+        return pd.merge(df0.assign(key=0), df1.assign(key=0), on='key').drop('key', axis=1).query(p.expr)
 
     @_('PROJECT "(" NAME "," expr ")"')
     def expr(self, p):
