@@ -22,7 +22,7 @@ class MyLexer(Lexer):
     CONCAT = r'concat'
     BTREE = r'Btree'
     HASH = r'Hash'
-:x
+    COMP = r'[><=]'
     OR = r'or'
     AND = r'and'
     NAME = r'[\']?[a-zA-Z_][a-zA-Z0-9_]*[\']?'
