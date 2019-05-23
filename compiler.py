@@ -4,7 +4,7 @@ from sly import Lexer,Parser
 
 class MyLexer(Lexer):
     tokens = { INPUT,OUTPUT,SELECT,PROJECT,AVGGROUP,AVG,SUMGROUP,SORT,JOIN,MOVAVG,MOVSUM,CONCAT,BTREE,HASH,COMP,OR,AND,NAME,NUMBER,DEFINE }
-    literals = {'(',')', ','} 
+    literals = {'(',')', ',','"'} 
     ignore = ' \t'
    
     # Tokens
@@ -22,7 +22,7 @@ class MyLexer(Lexer):
     CONCAT = r'concat'
     BTREE = r'Btree'
     HASH = r'Hash'
-    COMP = r'[><=]'
+    COMP = r'[><=]+'
     OR = r'or'
     AND = r'and'
     NAME = r'[\']?[a-zA-Z_][a-zA-Z0-9_]*[\']?'
@@ -130,8 +130,17 @@ class MyParser(Parser):
     def expr(self, p):
         if p.COMP == "=":
             return p.NAME0+"=="+p.NAME1
+            #return p.NAME0+"=="+"\""+p.NAME1+"\""
         else:
             return p.NAME0+p.COMP+p.NAME1
+            #return p.NAME0+p.COMP+"\""+p.NAME1+"\""
+    
+    @_('NAME COMP "\"" NAME "\""')
+    def expr(self, p):
+        if p.COMP == "=":
+            return p.NAME0+"=="+"\""+p.NAME1+"\""
+        else:
+            return p.NAME0+p.COMP+"\""+p.NAME1+"\""
     
     @_('NAME COMP NUMBER')
     def expr(self, p):
@@ -148,6 +157,10 @@ class MyParser(Parser):
         else:
             l.append(p.expr)
         return l;
+
+    @_('"(" expr ")"')
+    def expr(self, p):
+        return p.expr;
 
     @_('NAME')
     def expr(self, p):
