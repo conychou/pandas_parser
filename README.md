@@ -30,9 +30,9 @@ R6 := avggroup(R1, qty, pricerange) // select qty, avg group by pricerange
 
 S := inputfromfile(sales2) // suppose column headers are saleid|I|C|S|T|Q|P
 
-T := join(R, S, R_customerid = S_C) // T has all the columns of R and S ,but the
-   // column headers are prefaced by the table they came from, e.g. R_A, R_B, 
-   // R_E, S_B, S_C, S_D
+T := join(R, S, R_saleid = S_C) // T has all the columns of R and S ,but the
+   // column headers are prefaced by the table they came from, e.g. R_saleid, R_qty, 
+   // R_customerid, R_pricerange, S_saleid, S_I, S_C, S_S, S_T, S_Q, S_P
 
 T1 := join(R1, S, R1_qty <= S_Q)   
 
