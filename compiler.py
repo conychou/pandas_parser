@@ -64,12 +64,13 @@ class MyParser(Parser):
     @_('HASH "(" NAME "," expr ")"')
     @_('BTREE "(" NAME "," expr ")"')
     def statement(self, p):
+        self.names[p.NAME] = self.names[p.NAME].reset_index()
         self.names[p.NAME] = self.names[p.NAME].set_index(p.expr)
         self.names[p.NAME] = self.names[p.NAME].sort_index() 
 
     @_('OUTPUT "(" NAME "," NAME ")"')
     def statement(self, p):
-        return self.names[p.NAME0].to_csv(p.NAME1,sep='|',index=False)
+        self.names[p.NAME0].to_csv(p.NAME1,sep='|',index=False)
 
     @_('INPUT "(" NAME ")"')
     def expr(self, p):
@@ -87,7 +88,10 @@ class MyParser(Parser):
 
     @_('PROJECT "(" NAME "," expr ")"')
     def expr(self, p):
-        return pd.DataFrame(self.names[p.NAME],columns=p.expr)
+        l = p.expr
+        if type(l) != list:
+            l = [p.expr]
+        return pd.DataFrame(self.names[p.NAME],columns=l)
 
     @_('AVG "(" NAME "," NAME ")"')
     def expr(self, p):
