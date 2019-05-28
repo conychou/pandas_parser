@@ -1,6 +1,6 @@
 # pandas_parser
 
-This is a pandas wrapper to let user can call through API.
+This is a pandas wrapper to let user can call through SQL-like API.
 
 How to run
 ===================================================================
@@ -82,9 +82,9 @@ Supported Functions:
 // are prefaced by the table they came from, e.g. R_saleid, R_qty, 
 // R_customerid, R_pricerange, S_saleid, S_I, S_C, S_S, S_T, S_Q, S_P
 
-**T := join(R, S, R_saleid = S_C)**
+**T := join(R, S, R.saleid = S.C)**
 
-**T1 := join(R1, S, R1_qty <= S_Q)**
+**T1 := join(R1, S, R1.qty <= S.Q)**
 
 // sort T1 by S_C
 
