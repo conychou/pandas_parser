@@ -25,7 +25,7 @@ class MyLexer(Lexer):
     COMP = r'[><=]+'
     OR = r'or'
     AND = r'and'
-    NAME = r'[\']?[a-zA-Z_][a-zA-Z0-9_]*[\']?'
+    NAME = r'[\']?[a-zA-Z_][a-zA-Z0-9_.]*[\']?'
     NUMBER = r'\d+'
     DEFINE = r':='
     # Ignored pattern
@@ -84,7 +84,8 @@ class MyParser(Parser):
     def expr(self, p):
         df0 = self.names[p.NAME0].add_prefix(p.NAME0+"_")
         df1 = self.names[p.NAME1].add_prefix(p.NAME1+"_")
-        return pd.merge(df0.assign(key=0), df1.assign(key=0), on='key').drop('key', axis=1).query(p.expr)
+        query = p.expr.replace(".","_")
+        return pd.merge(df0.assign(key=0), df1.assign(key=0), on='key').drop('key', axis=1).query(query)
 
     @_('PROJECT "(" NAME "," expr ")"')
     def expr(self, p):
